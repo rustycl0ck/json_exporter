@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "json-exporter.fullname" . }}-config
+  labels:
+    {{- include "json-exporter.labels" . | nindent 4 }}
+data:
+  config.yml: |-
+{{ required "A valid .Values.config entry is required!" (toYaml .Values.config | indent 4) }}
