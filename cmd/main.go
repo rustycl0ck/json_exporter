@@ -97,6 +97,16 @@ func probeHandler(w http.ResponseWriter, r *http.Request, logger log.Logger, con
 		return
 	}
 
+	passwordFile := r.URL.Query().Get("basic_auth_password_file")
+	if passwordFile != "" {
+		config.HTTPClientConfig.BasicAuth.PasswordFile = passwordFile
+	}
+
+	bearerTokenFile := r.URL.Query().Get("bearer_token_file")
+	if bearerTokenFile != "" {
+		config.HTTPClientConfig.BearerTokenFile = bearerTokenFile
+	}
+
 	data, err := internal.FetchJson(ctx, logger, target, config)
 	if err != nil {
 		http.Error(w, "Failed to fetch JSON response. TARGET: "+target+", ERROR: "+err.Error(), http.StatusServiceUnavailable)

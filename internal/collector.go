@@ -168,7 +168,6 @@ func extractLabels(logger log.Logger, json []byte, paths []string) []string {
 			if eval.Error != nil {
 				level.Error(logger).Log("msg", "Failed to evaluate", "json", string(json), "err", eval.Error) //nolint:errcheck
 			} else {
-				level.Warn(logger).Log("msg", "Label path not found in json", "path", path)                        //nolint:errcheck
 				level.Debug(logger).Log("msg", "Label path not found in json", "path", path, "json", string(json)) //nolint:errcheck
 			}
 			continue
