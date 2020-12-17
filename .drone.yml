@@ -1,0 +1,60 @@
+---
+kind: pipeline
+name: default
+type: docker
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build-test
+  image: golang
+  commands:
+    - make build
+    - make test
+  when:
+    event:
+    - pull_request
+    - tag
+    - push
+    ref:
+    - refs/heads/custom
+    - refs/tags/*
+
+- name: copy-binary
+  image: busybox
+  commands:
+    - mkdir -p .build/linux-amd64
+    - cp json_exporter ./build/linux-amd64/
+  when:
+    event:
+    - tag
+    - push
+    ref:
+    - refs/heads/custom
+    - refs/tags/*
+
+- name: snmptrapd
+  image: plugins/docker
+  settings:
+    auto_tag: true
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    registry: docker.io
+    repo: ciscocx/json_exporter
+  when:
+    event:
+    - tag
+    - push
+    ref:
+    - refs/heads/custom
+    - refs/tags/*
+
+---
+kind: signature
+hmac: 97f38694d34913d7c9df2f1c0c8e6a7067169014fa852e755ff522ecde16d932
+
+...
